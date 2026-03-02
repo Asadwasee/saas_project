@@ -1,12 +1,12 @@
-import { NavLink } from "react-router-dom";
+import { NavLink } from 'react-router-dom'
 
 const links = [
-  { label: "Home", to: "/" },
-  { label: "Pricing", to: "/pricing" },
-  { label: "Case Studies", to: "/case-studies" },
-  { label: "FAQ", to: "/faq" },
-  { label: "Contact", to: "/contact" },
-];
+  { label: 'Home', to: '/' },
+  { label: 'Pricing', to: '/pricing' },
+  { label: 'Case Studies', to: '/case-studies' },
+  { label: 'FAQ', to: '/faq' },
+  { label: 'Contact', to: '/contact' }
+]
 
 export default function Navbar() {
   return (
@@ -23,7 +23,9 @@ export default function Navbar() {
               <NavLink
                 key={link.to}
                 to={link.to}
-                className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+                className={({ isActive }) =>
+                  `nav-link ${isActive ? 'active' : ''}`
+                }
               >
                 {link.label}
               </NavLink>
@@ -34,5 +36,5 @@ export default function Navbar() {
         </div>
       </nav>
     </header>
-  );
+  )
 }
