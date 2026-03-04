@@ -1,8 +1,6 @@
 import { useParams, Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import Icon from '../components/Icons'
 import useApi from '../hooks/useApi'
-import api from '../api/api'
 
 export default function BlogDetailPage() {
   const { slug } = useParams()
@@ -31,7 +29,6 @@ export default function BlogDetailPage() {
       
       <article className="blog-body" dangerouslySetInnerHTML={{ __html: post.content }} />
       
-      {/* Dynamic Nav & Footer yahan call honge automatic agar App.jsx mein setup hain */}
     </div>
   )
 }
