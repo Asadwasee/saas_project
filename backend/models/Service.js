@@ -3,10 +3,10 @@ const mongoose = require("mongoose");
 const serviceSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
-    slug: { type: String, required: true, unique: true }, // Yeh missing tha
+    slug: { type: String, required: true, unique: true },
     icon: String, 
     description: { type: String, required: true },
-    color: String, // Yeh bhi missing tha
+    color: String, 
     details: [
         {
             heading: String,
