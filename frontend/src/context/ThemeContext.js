@@ -1,5 +1,18 @@
-import { createContext } from 'react'
+// import { createContext } from 'react'
+
+// const ThemeContext = createContext(null)
+
+// export default ThemeContext
+
+// src/context/ThemeContext.js
+import { createContext, useContext } from 'react'
 
 const ThemeContext = createContext(null)
+export default ThemeContext // ← default export (context object)
 
-export default ThemeContext
+// ✅ NEW — named export that was missing
+export function useTheme() {
+  const ctx = useContext(ThemeContext)
+  if (!ctx) throw new Error('useTheme must be inside ThemeProvider')
+  return ctx
+}

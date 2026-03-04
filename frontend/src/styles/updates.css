@@ -1,0 +1,351 @@
+/* ================================================================
+   UPDATES CSS
+   Append this entire file to the BOTTOM of your index.css
+   ================================================================ */
+
+/* ── SVG icon helpers ─────────────────────────────────────────── */
+svg {
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* Spinning loader icon */
+@keyframes icon-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spin-icon {
+  animation: icon-spin 0.9s linear infinite;
+}
+
+/* ── API state banners ───────────────────────────────────────── */
+.api-loading,
+.api-error {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  margin-bottom: 16px;
+}
+
+.api-loading {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+}
+
+.api-error {
+  border: 1px solid rgba(255, 122, 110, 0.35);
+  background: rgba(255, 122, 110, 0.07);
+  color: #ff9f97;
+}
+
+/* ── Loading screen icon (was font emoji) ────────────────────── */
+.loading-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: unset; /* remove old font-size */
+  animation: pulse-scale 1.8s ease-in-out infinite;
+}
+
+/* ── Theme toggle icon size fix ──────────────────────────────── */
+.theme-toggle-thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: unset;
+  color: var(--text);
+}
+
+/* ── Blog search icon (SVG replaces span emoji) ──────────────── */
+.blog-search-icon-svg {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+}
+/* Remove old emoji-based rule if present */
+.blog-search-icon {
+  display: none;
+}
+
+/* ── Service card icon (SVG inside svc-icon span) ────────────── */
+.svc-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--svc-color, var(--accent));
+  font-size: unset;
+}
+
+/* ── Service detail hero icon ────────────────────────────────── */
+.svc-detail-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--svc-color, var(--accent));
+  font-size: unset;
+}
+
+/* ── Team avatar icon ─────────────────────────────────────────── */
+.team-avatar {
+  color: var(--accent);
+}
+
+/* ── Value icon ───────────────────────────────────────────────── */
+.value-icon {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  color: var(--accent);
+  font-size: unset;
+}
+
+/* ── Mission/Vision icon ─────────────────────────────────────── */
+.mv-icon {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  color: var(--accent);
+  font-size: unset;
+}
+
+/* ── Mobile hamburger button ─────────────────────────────────── */
+.nav-hamburger {
+  display: none;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  padding: 6px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: border-color 0.2s ease;
+}
+.nav-hamburger:hover {
+  border-color: var(--accent);
+}
+
+/* ── Mobile drawer ────────────────────────────────────────────── */
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  background: rgba(15, 11, 9, 0.97);
+  border-top: 1px solid var(--line);
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.32s ease;
+}
+
+[data-theme='light'] .mobile-menu {
+  background: rgba(245, 240, 236, 0.98);
+}
+
+.mobile-menu--open {
+  max-height: 520px;
+}
+
+.mobile-menu-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text);
+  border-bottom: 1px solid var(--line);
+  text-decoration: none;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease;
+}
+.mobile-menu-link:last-child {
+  border-bottom: none;
+}
+.mobile-menu-link.active {
+  color: var(--accent);
+}
+.mobile-menu-link:hover {
+  background: rgba(244, 123, 48, 0.06);
+}
+
+/* ================================================================
+   FULL RESPONSIVE OVERRIDES
+   ================================================================ */
+
+/* ── Navbar ─────────────────────────────────────────────────────
+   Show hamburger, hide desktop links at ≤ 900 px               */
+@media (max-width: 900px) {
+  .simple-nav-links {
+    display: none;
+  }
+  .nav-hamburger {
+    display: flex;
+  }
+  .mobile-menu {
+    display: flex;
+  }
+
+  .simple-nav-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+/* ── Hero / page intro ───────────────────────────────────────── */
+@media (max-width: 760px) {
+  h1 {
+    font-size: clamp(1.6rem, 5vw, 2.4rem);
+  }
+  h2 {
+    font-size: clamp(1.2rem, 4vw, 1.8rem);
+  }
+
+  .hero-copy {
+    font-size: 0.9rem;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .hero-actions .btn {
+    text-align: center;
+  }
+}
+
+/* ── Grids → 1 col on mobile ─────────────────────────────────── */
+@media (max-width: 760px) {
+  .card-grid.two,
+  .card-grid.three,
+  .contact-grid,
+  .blog-grid,
+  .blog-related-grid,
+  .mv-grid,
+  .services-grid,
+  .team-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Pricing: stack cards */
+  .price-card.featured {
+    order: -1;
+  }
+
+  /* Billing toggle: full width */
+  .billing-toggle {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* Table: horizontal scroll */
+  .table-scroll {
+    overflow-x: auto;
+  }
+
+  /* Contact map/form */
+  .contact-grid {
+    gap: 16px;
+  }
+  .map-frame iframe {
+    height: 220px;
+  }
+}
+
+/* ── Tablet: 2 col for 3-col grids ──────────────────────────── */
+@media (min-width: 761px) and (max-width: 980px) {
+  .card-grid.three,
+  .services-grid,
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ── Timeline: single column on small screens ────────────────── */
+@media (max-width: 760px) {
+  .tl-line {
+    display: none;
+  }
+  .tl-connector {
+    display: none;
+  }
+  .timeline {
+    gap: 12px;
+  }
+
+  .tl-item {
+    display: block !important;
+    grid-template-areas: unset !important;
+    grid-template-columns: unset !important;
+  }
+
+  .tl-card {
+    text-align: left !important;
+  }
+}
+
+/* ── Blog detail ─────────────────────────────────────────────── */
+@media (max-width: 760px) {
+  .comment-form-row {
+    grid-template-columns: 1fr;
+  }
+  .blog-detail-hero {
+    text-align: left;
+  }
+  .blog-content-block {
+    max-width: 100%;
+  }
+}
+
+/* ── Service detail stats ─────────────────────────────────────── */
+@media (max-width: 760px) {
+  .svc-detail-stats {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+/* ── Section padding on small screens ───────────────────────── */
+@media (max-width: 480px) {
+  .section-block {
+    padding: 16px 12px;
+  }
+  .page-wrap {
+    padding-top: 14px;
+  }
+
+  .svc-card,
+  .team-card,
+  .blog-card,
+  .price-card {
+    padding: 14px;
+  }
+}
+
+/* ── Sidebar (admin) on mobile ───────────────────────────────── */
+@media (max-width: 900px) {
+  /* The admin Sidebar uses fixed positioning with w-64.
+     On small screens collapse it off-canvas.
+     Add a toggle button in MainLayout if needed. */
+  .w-64 {
+    width: 100%;
+    height: auto;
+    position: static;
+  }
+  .ml-64 {
+    margin-left: 0;
+  }
+  .flex.min-h-screen {
+    flex-direction: column;
+  }
+}
