@@ -3,10 +3,17 @@ const mongoose = require("mongoose");
 const serviceSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
-    icon: String, // Icon name (like 'FaRobot')
+    slug: { type: String, required: true, unique: true }, // Yeh missing tha
+    icon: String, 
     description: { type: String, required: true },
-    details: String, // Detail page content
-  },
+    color: String, // Yeh bhi missing tha
+    details: [
+        {
+            heading: String,
+            body: String
+        }
+    ]
+},
   { timestamps: true },
 );
 

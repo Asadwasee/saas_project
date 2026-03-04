@@ -7,7 +7,7 @@ const blogSchema = new mongoose.Schema(
     content: { type: String, required: true },
     category: String,
     image: String,
-    author: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    author: { type: String },
   },
   { timestamps: true },
 );
