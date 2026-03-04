@@ -4,196 +4,63 @@ import Icon from '../components/Icons'
 import useApi from '../hooks/useApi'
 
 const ALL = 'All'
-
-// Build categories dynamically
-function buildCategories(blogs) {
-  const cats = [...new Set(blogs.map((b) => b.category).filter(Boolean))]
-  return [ALL, ...cats]
-}
-
-// Format date
-function formatDate(dateStr) {
-  if (!dateStr) return ''
-  const d = new Date(dateStr)
-  return d.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric'
-  })
-}
-
-// Estimate read time
-function readTime(content = '') {
-  const words = content.replace(/<[^>]+>/g, '').split(/\s+/).length
-  return `${Math.max(1, Math.ceil(words / 200))} min read`
-}
+const SERVER_URL = 'http://localhost:5000'; 
 
 export default function BlogPage() {
   const [search, setSearch] = useState('')
   const [activeCategory, setActiveCategory] = useState(ALL)
+  const { data: apiBlogs, loading, error } = useApi('/blogs')
 
-  const { data: apiBlogRaw, loading, error } = useApi('/blogs')
-
-  // Normalize API data
   const blogs = useMemo(() => {
-    if (!apiBlogRaw?.length) return []
-
-    return apiBlogRaw.map((b) => ({
-      _id: b._id,
-      slug: b.slug,
-      title: b.title,
-      category: b.category || 'General',
-      author: b.author?.name || b.author || 'Codecelix Team',
-      date: formatDate(b.createdAt || b.date),
-      readTime: b.readTime || readTime(b.content),
-      excerpt:
-        b.excerpt ||
-        (b.content || '').replace(/<[^>]+>/g, '').slice(0, 160) + '…',
-      content: b.content || '',
-      tags: b.tags || []
+    if (!apiBlogs) return []
+    return apiBlogs.map(b => ({
+      ...b,
+      author: b.author?.name || "Codecelix Team",
+      date: new Date(b.createdAt).toLocaleDateString(),
+      image: b.image ? `${SERVER_URL}/${b.image}` : null 
     }))
-  }, [apiBlogRaw])
+  }, [apiBlogs])
 
-  const categories = useMemo(() => buildCategories(blogs), [blogs])
+  const categories = useMemo(() => [ALL, ...new Set(blogs.map(b => b.category))], [blogs])
 
-  // Safe category (prevents invalid category state)
-  const safeActiveCategory = categories.includes(activeCategory)
-    ? activeCategory
-    : ALL
-
-  // Filter blogs
-  const filtered = useMemo(() => {
-    let result = blogs
-
-    if (safeActiveCategory !== ALL) {
-      result = result.filter((b) => b.category === safeActiveCategory)
-    }
-
-    if (search.trim()) {
-      const q = search.toLowerCase()
-
-      result = result.filter(
-        (b) =>
-          b.title.toLowerCase().includes(q) ||
-          b.excerpt.toLowerCase().includes(q) ||
-          b.tags.some((t) => t.toLowerCase().includes(q))
-      )
-    }
-
-    return result
-  }, [blogs, search, safeActiveCategory])
+  const filtered = blogs.filter(b => {
+    const matchesCat = activeCategory === ALL || b.category === activeCategory
+    const matchesSearch = b.title.toLowerCase().includes(search.toLowerCase())
+    return matchesCat && matchesSearch
+  })
 
   return (
-    <div className="blog-page">
-      <section className="section-block page-intro">
-        <p className="eyebrow">Blog</p>
-        <h1>Insights from the Codecelix team</h1>
-        <p className="hero-copy">
-          Engineering deep-dives, growth strategies, and product thinking from
-          the people building the platform.
-        </p>
-      </section>
-
+    <div className="blog-page container" style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       <section className="section-block">
-        {/* Search */}
-        <div className="blog-search-wrap">
-          <Icon name="search" size={16} className="blog-search-icon-svg" />
-          <input
+        <p className="eyebrow">Insights</p>
+        <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}>Latest from Codecelix</h1>
+        
+        <div className="blog-search-wrap" style={{ margin: '20px 0' }}>
+          <input 
+            type="search" 
+            placeholder="Search articles..." 
             className="blog-search"
-            type="search"
-            placeholder="Search posts…"
-            value={search}
+            style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #ddd' }}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
 
-        {/* Loading */}
-        {loading && (
-          <div className="api-loading">
-            <Icon name="spinner" size={22} className="spin-icon" />
-            <span>Loading posts…</span>
-          </div>
-        )}
-
-        {/* Error */}
-        {error && !loading && (
-          <div className="api-error">
-            <Icon name="exclamation-circle" size={18} />
-            <span>Could not load posts — {error}</span>
-          </div>
-        )}
-
-        {/* Categories */}
-        {!loading && !error && (
-          <div className="filter-row">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                className={`chip ${safeActiveCategory === cat ? 'active' : ''}`}
-                onClick={() => setActiveCategory(cat)}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        )}
-
-        {/* Empty */}
-        {!loading && filtered.length === 0 && (
-          <div className="blog-empty">
-            <p className="muted">No posts match your search.</p>
-          </div>
-        )}
-
-        {/* Blog Grid */}
-        {!loading && filtered.length > 0 && (
-          <div className="blog-grid">
-            {filtered.map((post, i) => (
-              <article
-                className="blog-card"
-                key={post._id}
-                style={{ animationDelay: `${i * 80}ms` }}
-              >
-                <div className="blog-card-top">
-                  <span className="blog-cat-badge">{post.category}</span>
-
-                  <span className="muted blog-read-time">
-                    <Icon
-                      name="clock"
-                      size={13}
-                      style={{ marginRight: 4, verticalAlign: 'middle' }}
-                    />
-                    {post.readTime}
-                  </span>
-                </div>
-
-                <h3>{post.title}</h3>
-
-                <p className="muted blog-excerpt">{post.excerpt}</p>
-
-                <div className="blog-card-footer">
-                  <div className="blog-meta">
-                    <span className="blog-author-dot" />
-                    <span className="blog-author">{post.author}</span>
-                    <span className="muted blog-date">· {post.date}</span>
-                  </div>
-
-                  <Link
-                    to={`/blog/${post.slug}`}
-                    className="btn btn-outline blog-read-btn"
-                  >
-                    Read
-                    <Icon
-                      name="arrow-right"
-                      size={13}
-                      style={{ marginLeft: 4 }}
-                    />
-                  </Link>
-                </div>
-              </article>
-            ))}
-          </div>
-        )}
+        {loading && <div className="loader">Connecting to Backend...</div>}
+        {error && <div className="error">Backend Connection Failed. Check if Server is running on 5000.</div>}
+        
+        <div className="blog-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '25px' }}>
+          {filtered.map((post) => (
+            <article key={post._id} className="blog-card" style={{ border: '1px solid #eee', borderRadius: '12px', overflow: 'hidden' }}>
+              {post.image && <img src={post.image} alt={post.title} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />}
+              <div className="blog-card-content" style={{ padding: '20px' }}>
+                <span className="blog-cat-badge" style={{ background: '#f0f0f0', padding: '4px 10px', borderRadius: '4px', fontSize: '12px' }}>{post.category}</span>
+                <h3 style={{ margin: '15px 0' }}>{post.title}</h3>
+                <p style={{ color: '#666', fontSize: '14px' }}>{post.excerpt}</p>
+                <Link to={`/blog/${post.slug}`} className="btn-link" style={{ color: '#007bff', fontWeight: 'bold', textDecoration: 'none' }}>Read More →</Link>
+              </div>
+            </article>
+          ))}
+        </div>
       </section>
     </div>
   )
