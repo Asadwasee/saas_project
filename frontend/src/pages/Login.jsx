@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, LogIn, Loader2 } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import api from '../api/api'
 
 export default function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -18,7 +19,7 @@ export default function Login() {
       
       if (res.data.token) {
         // Data Save Karna
-        localStorage.setItem('token', res.data.token);
+        localStorage.setItem('codecelix-token', res.data.token);
         localStorage.setItem('user', JSON.stringify({
             name: res.data.name,
             email: res.data.email,

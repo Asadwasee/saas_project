@@ -5,7 +5,8 @@ import useApi from '../hooks/useApi';
 export default function HomePage() {
   const { data: services, loading: sLoading } = useApi('/services');
   const { data: blogs, loading: bLoading } = useApi('/blogs');
-
+const { data: dashboard, loading: dLoading } = useApi('/dashboard/stats');
+ const stats = dashboard?.stats || {}; 
   // Sirf pehle 3 services dikhane ke liye
   const displayServices = services?.slice(0, 3) || [];
   // Sirf latest 2 blogs dikhane ke liye
@@ -31,26 +32,37 @@ export default function HomePage() {
       </section>
 
       {/* ── STATS SECTION ────────────────────────────────── */}
-      <section className="section-block border-y border-line py-12 bg-surface/30">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-6xl mx-auto px-4">
-          <div className="text-center">
-            <h3 className="text-3xl font-bold text-accent">99%</h3>
-            <p className="text-sm text-muted">Accuracy Rate</p>
-          </div>
-          <div className="text-center">
-            <h3 className="text-3xl font-bold text-accent">150+</h3>
-            <p className="text-sm text-muted">Projects Delivered</p>
-          </div>
-          <div className="text-center">
-            <h3 className="text-3xl font-bold text-accent">24/7</h3>
-            <p className="text-sm text-muted">Smart Support</p>
-          </div>
-          <div className="text-center">
-            <h3 className="text-3xl font-bold text-accent">40%</h3>
-            <p className="text-sm text-muted">Cost Efficiency</p>
-          </div>
-        </div>
-      </section>
+<section className="section-block border-y border-line py-12 bg-surface/30">
+  <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-6xl mx-auto px-4">
+
+    <div className="text-center">
+      <h3 className="text-3xl font-bold text-accent">
+        {dLoading ? "..." : stats.users || 0}
+      </h3>
+      <p className="text-sm text-muted">Total Users</p>
+    </div>
+
+    <div className="text-center">
+      <h3 className="text-3xl font-bold text-accent">
+        {dLoading ? "..." : stats.services || 0}
+      </h3>
+      <p className="text-sm text-muted">Services</p>
+    </div>
+
+    <div className="text-center">
+      <h3 className="text-3xl font-bold text-accent">
+        {dLoading ? "..." : stats.messages || 0}
+      </h3>
+      <p className="text-sm text-muted">Contact Messages</p>
+    </div>
+
+    <div className="text-center">
+      <h3 className="text-3xl font-bold text-accent">24/7</h3>
+      <p className="text-sm text-muted">Support</p>
+    </div>
+
+  </div>
+</section>
 
       {/* ── SERVICES PREVIEW ─────────────────────────────── */}
       <section className="section-block py-20 px-4">

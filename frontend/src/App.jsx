@@ -24,7 +24,9 @@ import ContactPage from './pages/ContactPage'
 import NotFoundPage from './pages/NotFoundPage'
 import Login from './pages/Login'
 import Register from './pages/Register'
-
+import AdminServices from "./pages/admin/AdminServices";
+import CreateService from "./pages/admin/CreateService";
+import EditService from "./pages/admin/EditService";
 // ── SCROLL TO TOP COMPONENT ──────────────────
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -42,6 +44,10 @@ function AppRoutes() {
       <Route path="/about" element={<PageTransition><AboutPage /></PageTransition>} />
       <Route path="/services" element={<PageTransition><ServicesPage /></PageTransition>} />
       <Route path="/services/:slug" element={<PageTransition><ServiceDetailPage /></PageTransition>} />
+       <Route path="/admin/services" element={<AdminServices />} />
+  <Route path="/admin/services/create" element={<CreateService />} />
+  <Route path="/admin/services/edit/:id" element={<EditService />} />
+
       <Route path="/blog" element={<PageTransition><BlogPage /></PageTransition>} />
       <Route path="/blog/:slug" element={<PageTransition><BlogDetailPage /></PageTransition>} />
       <Route path="/pricing" element={<PageTransition><PricingPage /></PageTransition>} />
