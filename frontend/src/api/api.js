@@ -1,7 +1,3 @@
-// src/api/api.js
-// Central Axios instance — all backend requests go through here.
-// Base URL reads from Vite env variable; falls back to localhost for dev.
-
 import axios from 'axios'
 
 const api = axios.create({

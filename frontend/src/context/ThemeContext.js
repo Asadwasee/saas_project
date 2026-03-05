@@ -1,10 +1,3 @@
-// import { createContext } from 'react'
-
-// const ThemeContext = createContext(null)
-
-// export default ThemeContext
-
-// src/context/ThemeContext.js
 import { createContext, useContext } from 'react'
 
 const ThemeContext = createContext(null)

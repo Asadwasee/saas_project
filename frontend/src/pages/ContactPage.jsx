@@ -1,106 +1,96 @@
 import { useState } from "react";
+import api from "../api/api"; 
+import toast from "react-hot-toast";
 
-const initialState = {
-  name: "",
-  email: "",
-  message: "",
+const initialState = { 
+  name: "", 
+  email: "", 
+  subject: "Website Inquiry", // Backend field added
+  message: "" 
 };
 
 export default function ContactPage() {
   const [formData, setFormData] = useState(initialState);
-  const [errors, setErrors] = useState({});
-  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const validate = () => {
-    const nextErrors = {};
-
-    if (!formData.name.trim()) nextErrors.name = "Name is required.";
-
-    if (!formData.email.trim()) {
-      nextErrors.email = "Email is required.";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      nextErrors.email = "Enter a valid email address.";
-    }
-
-    if (!formData.message.trim()) {
-      nextErrors.message = "Message is required.";
-    } else if (formData.message.trim().length < 10) {
-      nextErrors.message = "Message should be at least 10 characters.";
-    }
-
-    return nextErrors;
-  };
-
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const nextErrors = validate();
-    setErrors(nextErrors);
+    setLoading(true);
 
-    if (Object.keys(nextErrors).length === 0) {
-      setSubmitted(true);
+    try {
+      // Backend route is singular /contact
+      await api.post("/contact", formData); 
+      toast.success("Message sent! Our team will contact you soon.");
       setFormData(initialState);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to send message.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <section className="section-block">
-      <div className="section-head">
-        <p className="eyebrow">Contact</p>
-        <h1>Talk to the Codecelix team</h1>
+      <div className="section-head text-center mb-12">
+        <p className="eyebrow text-accent font-bold uppercase tracking-widest">Contact</p>
+        <h1 className="text-4xl md:text-6xl font-black italic uppercase">Talk to Codecelix</h1>
       </div>
 
-      <div className="contact-grid">
-        <div className="map-shell">
-          <h3>Our Location</h3>
-          <div className="map-frame">
-            <iframe
-              title="Codecelix map"
-              src="https://www.google.com/maps?q=New%20York%20City&output=embed"
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
-          </div>
+      <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+        <div className="glass border border-line rounded-3xl overflow-hidden min-h-100">
+          <iframe
+            className="w-full h-full grayscale opacity-70 hover:grayscale-0 transition-all"
+            title="Codecelix map"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3401.558319326!2d74.3411!3d31.5204!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzHCsDMxJzEzLjQiTiA3NMKwMjAnMjguMCJF!5e0!3m2!1sen!2spk!4v1625555555555!5m2!1sen!2spk"
+            loading="lazy"
+          />
         </div>
 
-        <form className="form-shell" onSubmit={handleSubmit} noValidate>
-          <h3>Send a Message</h3>
+        <form className="glass border border-line p-8 md:p-12 rounded-3xl space-y-6 bg-surface/20" onSubmit={handleSubmit}>
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase text-muted">Full Name</label>
+            <input
+              className="w-full bg-bg/50 border border-line rounded-2xl p-4 focus:border-accent outline-none transition-all"
+              value={formData.name}
+              required
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="Asad Waseem"
+            />
+          </div>
 
-          <label htmlFor="name">Name</label>
-          <input
-            id="name"
-            value={formData.name}
-            onChange={(event) => setFormData({ ...formData, name: event.target.value })}
-            placeholder="Your name"
-          />
-          {errors.name && <p className="error-text">{errors.name}</p>}
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase text-muted">Email Address</label>
+            <input
+              type="email"
+              className="w-full bg-bg/50 border border-line rounded-2xl p-4 focus:border-accent outline-none transition-all"
+              value={formData.email}
+              required
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              placeholder="asad@codecelix.com"
+            />
+          </div>
 
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            value={formData.email}
-            onChange={(event) => setFormData({ ...formData, email: event.target.value })}
-            placeholder="you@company.com"
-          />
-          {errors.email && <p className="error-text">{errors.email}</p>}
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase text-muted">Project Brief</label>
+            <textarea
+              rows="4"
+              className="w-full bg-bg/50 border border-line rounded-2xl p-4 focus:border-accent outline-none transition-all resize-none"
+              value={formData.message}
+              required
+              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+              placeholder="Tell us about your project..."
+            />
+          </div>
 
-          <label htmlFor="message">Message</label>
-          <textarea
-            id="message"
-            rows="5"
-            value={formData.message}
-            onChange={(event) => setFormData({ ...formData, message: event.target.value })}
-            placeholder="Tell us what you need"
-          />
-          {errors.message && <p className="error-text">{errors.message}</p>}
-
-          <button className="btn btn-solid" type="submit">
-            Send Message
+          <button 
+            disabled={loading}
+            className="btn btn-solid w-full py-5 rounded-2xl font-black text-lg shadow-lg shadow-accent/20 disabled:opacity-50" 
+            type="submit"
+          >
+            {loading ? "Sending..." : "Deploy Message"}
           </button>
-          {submitted && <p className="success-text">Message sent successfully.</p>}
         </form>
       </div>
     </section>
   );
 }
-

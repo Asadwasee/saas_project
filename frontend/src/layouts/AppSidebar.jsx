@@ -191,7 +191,7 @@ const AppSidebar = () => {
   );
 
   return (
-    <aside className="fixed h-screen w-[290px] bg-white">
+    <aside className="fixed h-screen w-72.5 bg-white">
       <nav>
         {renderMenuItems(navItems, "main")}
         {renderMenuItems(othersItems, "others")}

@@ -1,8 +1,3 @@
-// src/hooks/useApi.js
-// Generic data-fetching hook used by every page that talks to the backend.
-// Usage:
-//   const { data, loading, error, refetch } = useApi("/blogs");
-
 import { useState, useEffect, useCallback } from 'react'
 import api from '../api/api'
 
