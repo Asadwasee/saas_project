@@ -41,13 +41,11 @@ Multer (Media Handling)
 
 Installation & Setup
 1. Clone the Repository
-Bash
 git clone https://github.com/your-username/codecelix.git
 cd codecelix
 2. Backend Configuration
 Navigate to the backend directory and install dependencies:
 
-Bash
 cd backend
 npm install
 Create a .env file in the backend folder and add:
@@ -58,31 +56,12 @@ MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_secret_key_here
 Start the backend server:
 
-Bash
 npm run dev
 3. Frontend Configuration
 Navigate to the frontend directory and install dependencies:
 
-Bash
 cd ../frontend
 npm install
 Start the development server:
 
-Bash
 npm run dev
-Project Structure
-Plaintext
-codecelix/
-├── backend/
-│   ├── controllers/    # Request handling logic
-│   ├── models/         # MongoDB schemas (Blog, Service, User)
-│   ├── routes/         # API endpoint definitions
-│   ├── middleware/     # Auth & Error handling
-│   └── uploads/        # Local storage for images
-├── frontend/
-│   ├── src/
-│   │   ├── components/ # Reusable UI components (Navbar, Footer, etc.)
-│   │   ├── pages/      # Public pages & Admin views
-│   │   ├── hooks/      # Custom React hooks (useApi)
-│   │   └── api/        # Axios configuration
-└── README.md
