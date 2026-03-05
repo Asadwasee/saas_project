@@ -12,7 +12,7 @@ exports.createBlog = async (req, res) => {
             content,
             category,
             image,
-            author: req.user.id // Ye protect middleware se aayega
+            author: req.user.id 
         });
 
         res.status(201).json(blog);
@@ -29,6 +29,33 @@ exports.getBlogs = async (req, res) => {
         res.json(blogs);
     } catch (error) {
         res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Update a blog
+// @route   PUT /api/blogs/:id
+exports.updateBlog = async (req, res) => {
+    try {
+        const { title, slug, content, category, image, description } = req.body;
+        
+        const blog = await Blog.findById(req.params.id);
+
+        if (!blog) {
+            return res.status(404).json({ message: "Blog not found" });
+        }
+
+        // Data update karein
+        blog.title = title || blog.title;
+        blog.slug = slug || blog.slug;
+        blog.content = content || blog.content;
+        blog.category = category || blog.category;
+        blog.image = image || blog.image;
+        blog.description = description || blog.description;
+
+        const updatedBlog = await blog.save();
+        res.json(updatedBlog);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
     }
 };
 
