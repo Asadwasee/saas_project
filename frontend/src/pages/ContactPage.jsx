@@ -1,39 +1,43 @@
-import { useState } from "react";
-import api from "../api/api"; 
-import toast from "react-hot-toast";
+import { useState } from 'react'
+import api from '../api/api'
+import toast from 'react-hot-toast'
 
-const initialState = { 
-  name: "", 
-  email: "", 
-  subject: "Website Inquiry", // Backend field added
-  message: "" 
-};
+const initialState = {
+  name: '',
+  email: '',
+  subject: 'Website Inquiry', // Backend field added
+  message: ''
+}
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState(initialState);
-  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState(initialState)
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
-    setLoading(true);
+    event.preventDefault()
+    setLoading(true)
 
     try {
       // Backend route is singular /contact
-      await api.post("/contact", formData); 
-      toast.success("Message sent! Our team will contact you soon.");
-      setFormData(initialState);
+      await api.post('/api/contact', formData)
+      toast.success('Message sent! Our team will contact you soon.')
+      setFormData(initialState)
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to send message.");
+      toast.error(err.response?.data?.message || 'Failed to send message.')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <section className="section-block">
       <div className="section-head text-center mb-12">
-        <p className="eyebrow text-accent font-bold uppercase tracking-widest">Contact</p>
-        <h1 className="text-4xl md:text-6xl font-black italic uppercase">Talk to Codecelix</h1>
+        <p className="eyebrow text-accent font-bold uppercase tracking-widest">
+          Contact
+        </p>
+        <h1 className="text-4xl md:text-6xl font-black italic uppercase">
+          Talk to Codecelix
+        </h1>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
@@ -46,51 +50,66 @@ export default function ContactPage() {
           />
         </div>
 
-        <form className="glass border border-line p-8 md:p-12 rounded-3xl space-y-6 bg-surface/20" onSubmit={handleSubmit}>
+        <form
+          className="glass border border-line p-8 md:p-12 rounded-3xl space-y-6 bg-surface/20"
+          onSubmit={handleSubmit}
+        >
           <div className="space-y-2">
-            <label className="text-xs font-bold uppercase text-muted">Full Name</label>
+            <label className="text-xs font-bold uppercase text-muted">
+              Full Name
+            </label>
             <input
               className="w-full bg-bg/50 border border-line rounded-2xl p-4 focus:border-accent outline-none transition-all"
               value={formData.name}
               required
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               placeholder="Asad Waseem"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-bold uppercase text-muted">Email Address</label>
+            <label className="text-xs font-bold uppercase text-muted">
+              Email Address
+            </label>
             <input
               type="email"
               className="w-full bg-bg/50 border border-line rounded-2xl p-4 focus:border-accent outline-none transition-all"
               value={formData.email}
               required
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
               placeholder="asad@codecelix.com"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-bold uppercase text-muted">Project Brief</label>
+            <label className="text-xs font-bold uppercase text-muted">
+              Project Brief
+            </label>
             <textarea
               rows="4"
               className="w-full bg-bg/50 border border-line rounded-2xl p-4 focus:border-accent outline-none transition-all resize-none"
               value={formData.message}
               required
-              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, message: e.target.value })
+              }
               placeholder="Tell us about your project..."
             />
           </div>
 
-          <button 
+          <button
             disabled={loading}
-            className="btn btn-solid w-full py-5 rounded-2xl font-black text-lg shadow-lg shadow-accent/20 disabled:opacity-50" 
+            className="btn btn-solid w-full py-5 rounded-2xl font-black text-lg shadow-lg shadow-accent/20 disabled:opacity-50"
             type="submit"
           >
-            {loading ? "Sending..." : "Deploy Message"}
+            {loading ? 'Sending...' : 'Deploy Message'}
           </button>
         </form>
       </div>
     </section>
-  );
+  )
 }

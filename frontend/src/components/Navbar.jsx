@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { NavLink, Link, useNavigate } from "react-router-dom";
+import { useState, useEffect, useCallback } from 'react'
+import { NavLink, Link, useNavigate } from 'react-router-dom'
 import {
   Menu,
   X,
@@ -7,52 +7,58 @@ import {
   LogOut,
   LayoutDashboard,
   ChevronRight,
-  User,
-} from "lucide-react";
-import ThemeToggle from "./ThemeToggle";
+  User
+} from 'lucide-react'
+import ThemeToggle from './ThemeToggle'
 
-// "About" link yahan add kar diya gaya hai
 const links = [
-  { label: "Home", to: "/" },
-  { label: "About", to: "/about" }, 
-  { label: "Services", to: "/services" },
-  { label: "Blog", to: "/blog" },
-  { label: "Pricing", to: "/pricing" },
-  { label: "Contact", to: "/contact" },
-];
+  { label: 'Home', to: '/' },
+  { label: 'About', to: '/about' },
+  { label: 'Services', to: '/services' },
+  { label: 'Blog', to: '/blog' },
+  { label: 'Pricing', to: '/pricing' },
+  { label: 'Contact', to: '/contact' }
+]
 
 export default function Navbar() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [user, setUser] = useState(null);
-  const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [user, setUser] = useState(null)
+  const navigate = useNavigate()
 
-  // Sync login state
-  useEffect(() => {
-    const savedUser = localStorage.getItem("user");
-    const token = localStorage.getItem("codecelix-token");
-
+  // ✅ Sync user from localStorage on mount AND after login event
+  const syncUser = useCallback(() => {
+    const savedUser = localStorage.getItem('user')
+    const token = localStorage.getItem('token')
     if (savedUser && token) {
-      setUser(JSON.parse(savedUser));
+      setUser(JSON.parse(savedUser))
     } else {
-      setUser(null);
+      setUser(null)
     }
-  }, []);
+  }, [])
+
+  useEffect(() => {
+    window.addEventListener('storage-update', syncUser) // listen for login
+    return () => window.removeEventListener('storage-update', syncUser)
+  }, [syncUser])
+
+  // Call syncUser on mount
+  useEffect(() => {
+    syncUser()
+  }, [syncUser])
 
   const handleLogout = () => {
-    localStorage.removeItem("codecelix-token");
-    localStorage.removeItem("user");
-
-    setUser(null);
-    setMenuOpen(false);
-
-    navigate("/login");
-  };
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    setUser(null)
+    setMenuOpen(false)
+    window.dispatchEvent(new Event('storage-update'))
+    navigate('/')
+  }
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 transition-all duration-300">
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
         <div className="glass-card rounded-4xl border border-white/10 bg-bg/60 backdrop-blur-xl px-6 py-3 flex items-center justify-between shadow-2xl shadow-black/20">
-          
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
             <div className="relative">
@@ -74,7 +80,7 @@ export default function Navbar() {
                 to={link.to}
                 className={({ isActive }) =>
                   `text-xs font-black uppercase tracking-widest transition-all hover:text-accent ${
-                    isActive ? "text-accent italic" : "text-muted"
+                    isActive ? 'text-accent italic' : 'text-muted'
                   }`
                 }
               >
@@ -86,19 +92,31 @@ export default function Navbar() {
           {/* Right Actions */}
           <div className="hidden lg:flex items-center gap-4 border-l border-white/10 pl-6">
             <ThemeToggle />
-            
+
             {!user ? (
-              <Link to="/login" className="btn btn-solid px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2">
+              <Link
+                to="/login"
+                className="btn btn-solid px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2"
+              >
                 Join <ChevronRight size={14} />
               </Link>
             ) : (
               <div className="flex items-center gap-3">
-                {user.role === "admin" && (
-                  <Link to="/admin/dashboard" className="p-2.5 bg-white/5 hover:bg-accent/20 text-white rounded-xl transition-all border border-white/5">
+                <span className="text-sm text-white font-semibold">
+                  👋 {user.name}
+                </span>
+                {user.role === 'admin' && (
+                  <Link
+                    to="/admin/dashboard"
+                    className="p-2.5 bg-white/5 hover:bg-accent/20 text-white rounded-xl transition-all border border-white/5"
+                  >
                     <LayoutDashboard size={20} />
                   </Link>
                 )}
-                <button onClick={handleLogout} className="p-2.5 bg-danger/5 hover:bg-danger/20 text-danger rounded-xl transition-all border border-danger/10">
+                <button
+                  onClick={handleLogout}
+                  className="p-2.5 bg-danger/5 hover:bg-danger/20 text-danger rounded-xl transition-all border border-danger/10"
+                >
                   <LogOut size={20} />
                 </button>
               </div>
@@ -118,16 +136,22 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Menu Overlay */}
-        <div 
+        <div
           className={`lg:hidden fixed inset-0 z-40 transition-all duration-500 ${
-            menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+            menuOpen
+              ? 'opacity-100 pointer-events-auto'
+              : 'opacity-0 pointer-events-none'
           }`}
         >
-          <div className="absolute inset-0 bg-bg/95 backdrop-blur-2xl" onClick={() => setMenuOpen(false)} />
-          
-          <div className={`absolute top-24 left-4 right-4 bg-surface border border-white/10 rounded-[2.5rem] p-8 transition-all duration-500 transform ${
-            menuOpen ? "translate-y-0 scale-100" : "-translate-y-10 scale-95"
-          }`}>
+          <div
+            className="absolute inset-0 bg-bg/95 backdrop-blur-2xl"
+            onClick={() => setMenuOpen(false)}
+          />
+          <div
+            className={`absolute top-24 left-4 right-4 bg-surface border border-white/10 rounded-[2.5rem] p-8 transition-all duration-500 transform ${
+              menuOpen ? 'translate-y-0 scale-100' : '-translate-y-10 scale-95'
+            }`}
+          >
             <div className="flex flex-col gap-6">
               {links.map((link) => (
                 <NavLink
@@ -136,7 +160,7 @@ export default function Navbar() {
                   onClick={() => setMenuOpen(false)}
                   className={({ isActive }) =>
                     `text-2xl font-black uppercase italic tracking-tighter flex items-center justify-between ${
-                      isActive ? "text-accent" : "text-white"
+                      isActive ? 'text-accent' : 'text-white'
                     }`
                   }
                 >
@@ -163,8 +187,7 @@ export default function Navbar() {
                       <p className="text-xs text-muted">{user.email}</p>
                     </div>
                   </div>
-
-                  {user.role === "admin" && (
+                  {user.role === 'admin' && (
                     <Link
                       to="/admin/dashboard"
                       onClick={() => setMenuOpen(false)}
@@ -173,7 +196,6 @@ export default function Navbar() {
                       Admin Panel
                     </Link>
                   )}
-
                   <button
                     onClick={handleLogout}
                     className="flex items-center justify-center gap-3 text-danger font-bold py-4 border border-danger/20 rounded-xl bg-danger/5 w-full"
@@ -188,5 +210,5 @@ export default function Navbar() {
         </div>
       </nav>
     </header>
-  );
+  )
 }
